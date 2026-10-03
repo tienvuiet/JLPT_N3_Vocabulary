@@ -1,0 +1,224 @@
+/* Font hệ thống hỗ trợ tiếng Việt. Không tải thư viện hay font bên ngoài. */
+:root {
+  --paper: #f5f7f3;
+  --white: #ffffff;
+  --ink: #243a30;
+  --muted: #65756b;
+  --green: #315d48;
+  --green-light: #e9f2e9;
+  --line: #dfe7dd;
+  --accent: #ad7551;
+  --sidebar-width: 268px;
+  --font-ui: "Segoe UI", Arial, "Helvetica Neue", sans-serif;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; color: var(--ink); background: var(--paper); font-family: var(--font-ui); font-size: 14px; line-height: 1.6; }
+button, a { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+button { font: inherit; cursor: pointer; color: inherit; }
+button:focus-visible, a:focus-visible { outline: 3px solid #82ac84; outline-offset: 4px; }
+button:disabled { opacity: .4; cursor: default; }
+button, progress { transition: background .2s, border-color .2s, box-shadow .2s, transform .2s; }
+.sidebar { position: fixed; inset: 0 auto 0 0; z-index: 2; width: var(--sidebar-width); padding: 32px 24px 24px; display: flex; flex-direction: column; background: #fdfefa; border-right: 1px solid var(--line); overflow-y: auto; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); font-size: 29px; font-weight: 750; line-height: 1.2; }
+.brand-mark { display: grid; place-items: center; flex-shrink: 0; width: 47px; height: 47px; background: var(--green); color: #fff; border-radius: 15px; font-family: "Yu Gothic", "Meiryo", sans-serif; font-size: 32px; font-weight: 400; box-shadow: 0 5px 12px #315d481f; }
+.brand-subtitle { display: block; margin-top: 5px; color: var(--muted); font-size: 9px; font-weight: 600; letter-spacing: .5px; }
+.course-heading { margin-top: 48px; }
+.eyebrow { color: var(--muted); font-size: 11px; font-weight: 650; letter-spacing: .8px; }
+h2 { display: flex; align-items: center; gap: 10px; margin: 9px 0 2px; font-size: 26px; line-height: 1.4; }
+.unit-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.course-heading p { margin: 0; color: var(--muted); font-size: 13px; }
+.part-list { display: grid; gap: 10px; margin-top: 25px; }
+.part-button { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 77px; padding: 13px; border: 1px solid transparent; border-radius: 14px; text-align: left; background: transparent; }
+.part-button:hover { background: #f0f5ed; }
+.part-button.active { background: var(--green-light); border-color: #cbdcc9; box-shadow: 0 3px 10px #315d4808; }
+.part-number { display: grid; place-items: center; flex-shrink: 0; width: 34px; height: 36px; background: #f0f2ed; border-radius: 10px; color: #66766c; font-size: 13px; font-weight: 650; }
+.active .part-number { background: var(--green); color: #fff; }
+.part-copy { flex: 1; min-width: 0; }
+.part-title { display: block; font-size: 14px; font-weight: 700; }
+.part-detail { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
+.part-indicator { font-size: 16px; color: var(--green); }
+.unit-summary { margin-top: 30px; padding: 19px 16px; border: 1px solid var(--line); border-radius: 15px; background: #f7f9f3; }
+.unit-summary p { margin: 9px 0 13px; color: var(--muted); font-size: 12px; }
+.unit-summary strong { color: var(--green); font-size: 30px; font-weight: 750; line-height: 1.1; }
+.small-note { display: block; margin-top: 12px; color: var(--muted); font-size: 11px; }
+.sidebar-bottom { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 28px; font-size: 11px; color: var(--muted); }
+.save-dot { width: 7px; height: 7px; flex-shrink: 0; border-radius: 50%; background: #7c9f6c; }
+.main { display: flex; flex-direction: column; min-height: 100svh; margin-left: var(--sidebar-width); padding: 0 clamp(24px, 4vw, 64px); background: radial-gradient(ellipse at 80% 5%, #eaf1e380, transparent 50%); }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 77px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.breadcrumb span { padding: 0 12px; color: #a0afa2; }
+.breadcrumb strong { color: var(--green); font-weight: 650; }
+.local-badge { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid #dfe7d8; border-radius: 30px; background: #fbfdf6; font-size: 11px; }
+.local-badge span { color: #6c9360; font-size: 8px; }
+.study { width: min(100%, 720px); margin: auto; padding: 32px 0 20px; }
+.study-heading { margin-bottom: 26px; text-align: center; }
+.study-heading > .eyebrow { display: inline-block; padding: 5px 11px; border: 1px solid #dce8d7; border-radius: 25px; color: #627f53; background: #edf4e8; font-size: 10px; }
+/* Tiêu đề dùng cùng font tiếng Việt với nội dung, không ép khoảng cách âm. */
+h1 { margin: 14px 0 9px; font-family: var(--font-ui); font-size: clamp(27px, 2.7vw, 38px); font-weight: 750; line-height: 1.35; letter-spacing: normal; text-wrap: balance; }
+h1 span { color: var(--green); white-space: nowrap; }
+.study-heading p { margin: 0; color: var(--muted); font-size: 14px; }
+.study-panel { padding: 25px 28px 16px; border: 1px solid #e1e8dc; border-radius: 23px; background: #ffffffc9; box-shadow: 0 16px 50px #2c513b08; }
+.lesson-toolbar, .progress-label, .card-meta, .navigation, .study-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.lesson-toolbar { margin-bottom: 17px; flex-wrap: wrap; }
+.lesson-toolbar > div { display: flex; align-items: center; gap: 10px; }
+.part-tag { padding: 5px 10px; background: var(--green-light); border: 1px solid #d8e5d3; border-radius: 7px; color: var(--green); font-size: 11px; font-weight: 750; letter-spacing: .5px; }
+.range-label { color: var(--muted); font-size: 12px; }
+.text-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; padding: 7px 10px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--muted); font-size: 12px; }
+.text-button:hover { background: #edf3e8; color: var(--green); }
+#shuffle { border-color: var(--line); background: #fff; }
+#shuffle:hover { background: #f1f6ee; }
+#shuffle svg { width: 17px; height: 17px; }
+.progress-label { margin-bottom: 9px; font-size: 12px; color: var(--muted); }
+.progress-label > span:first-child { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.progress-label strong { color: var(--green); font-weight: 650; }
+#progress-percent { flex-shrink: 0; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--green); }
+progress { display: block; width: 100%; height: 7px; border: 0; border-radius: 20px; overflow: hidden; background: #e8eee4; accent-color: #709a67; }
+progress::-webkit-progress-bar { border-radius: 20px; background: #e8eee4; }
+progress::-webkit-progress-value { border-radius: 20px; background: #709a67; transition: width .25s; }
+progress::-moz-progress-bar { border-radius: 20px; background: #709a67; }
+.card-meta { margin: 19px 0 12px; font-size: 12px; color: var(--muted); }
+#word-status { padding: 3px 9px; border-radius: 20px; background: #f0f3ed; font-size: 11px; }
+#word-status[data-status="known"] { color: var(--green); background: #e7f1e5; }
+#word-status[data-status="missed"] { color: #8e6335; background: #fbf1e4; }
+#counter { padding-right: 2px; color: #6e7d71; font-weight: 650; font-variant-numeric: tabular-nums; }
+/* Hai mặt chung một ô grid: nội dung dài tự tăng chiều cao, không bị cắt. */
+.flashcard { display: block; width: 100%; min-height: 315px; height: auto; padding: 0; border: 0; border-radius: 19px; background: transparent; perspective: 1400px; }
+.card-inner { display: grid; min-height: inherit; width: 100%; transform-style: preserve-3d; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.flashcard.is-flipped .card-inner { transform: rotateY(180deg); }
+.flashcard.no-animation .card-inner { transition: none; }
+.card-face { grid-area: 1 / 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; min-height: inherit; padding: 25px; border: 1px solid #d7e2d3; border-radius: 19px; background: linear-gradient(140deg, #fff, #fbfdf8); box-shadow: 0 8px 20px #3558390b; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.card-back { transform: rotateY(180deg); background: linear-gradient(140deg, #f5f9ee, #eef4e8); }
+.kanji { max-width: 100%; font-family: "Yu Mincho", "Hiragino Mincho ProN", "MS Mincho", serif; font-size: clamp(76px, 7vw, 106px); line-height: 1.35; letter-spacing: .06em; overflow-wrap: anywhere; color: #263e31; }
+.kanji.long-word { font-size: clamp(40px, 5.4vw, 68px); letter-spacing: .02em; }
+.han-viet-label { margin-bottom: 7px; color: #708465; font-size: 10px; font-weight: 650; letter-spacing: .7px; }
+.han-viet { max-width: 100%; margin-bottom: 10px; color: var(--green); font-size: 21px; line-height: 1.5; font-weight: 700; overflow-wrap: anywhere; }
+.kanji-meaning { max-width: 100%; margin-bottom: 17px; color: #586e51; text-align: center; font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
+.hiragana { max-width: 100%; font-family: "Yu Gothic", "Meiryo", sans-serif; font-size: clamp(27px, 3vw, 36px); line-height: 1.5; color: #283f30; overflow-wrap: anywhere; }
+.answer-divider { width: 40px; height: 2px; flex-shrink: 0; margin: 13px 0; border-radius: 5px; background: #c2d5b4; }
+.meaning { max-width: 100%; text-align: center; font-size: 19px; line-height: 1.65; overflow-wrap: anywhere; }
+.flip-hint { margin: 14px 0 18px; text-align: center; color: var(--muted); font-size: 12px; }
+.flip-hint span { margin-right: 5px; }
+.rating-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.rating-button { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 52px; padding: 10px; border: 1px solid #e7ddc8; border-radius: 11px; font-size: 14px; font-weight: 650; }
+.rating-button span { font-size: 19px; font-weight: 400; }
+.not-known { color: #846434; background: #fbf3e5; }
+.known { color: #fff; background: var(--green); border-color: var(--green); box-shadow: 0 4px 9px #315d481c; }
+.not-known:hover { background: #f5e8d0; }
+.known:hover { background: #244b38; }
+.navigation { margin-top: 15px; }
+.nav-button { min-height: 44px; padding: 7px 9px; border: 1px solid transparent; border-radius: 9px; background: transparent; font-size: 13px; font-weight: 600; }
+.nav-button:hover:enabled { background: #edf3e8; }
+.nav-caption { color: #8b9988; font-size: 12px; }
+.feedback { min-height: 36px; margin: 6px 0 0; text-align: center; color: #72816c; font-size: 12px; line-height: 1.65; }
+.study-footer { margin-top: 16px; padding: 0 3px; }
+.keyboard-hints { display: flex; align-items: center; gap: 6px; color: #7b8875; font-size: 11px; }
+.keyboard-hints > span { margin: 0 5px; }
+kbd { padding: 2px 6px; border: 1px solid #dce4d6; border-radius: 5px; background: #fcfdf9; font-family: var(--font-ui); font-size: 10px; box-shadow: 0 1px 0 #dce4d6; }
+.reset-button { color: #738168; }
+.reset-note { margin: 2px 12px 0; text-align: right; color: #88937f; font-size: 11px; }
+.page-footer { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 13px; padding: 15px 0 24px; color: #8d9b86; font-size: 11px; }
+.page-footer span[lang="ja"] { letter-spacing: 1px; }
+/* Màn hình vừa: thu gọn thanh bên để dành diện tích cho flashcard. */
+@media (min-width: 981px) and (max-width: 1200px) {
+  :root { --sidebar-width: 230px; }
+  .sidebar { padding: 27px 18px; }
+  .main { padding-inline: 28px; }
+  .local-badge { display: none; }
+  .study-panel { padding-inline: 23px; }
+  h1 { font-size: 31px; }
+}
+/* Máy tính bảng và điện thoại: các phần học nằm ngang phía trên nội dung. */
+@media (max-width: 980px) {
+  .sidebar { position: static; width: 100%; padding: 20px 28px; border-right: 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 20px; overflow: visible; }
+  .brand { font-size: 27px; }
+  .brand-mark { width: 42px; height: 42px; font-size: 29px; border-radius: 12px; }
+  .course-heading { margin: 0; align-self: center; text-align: right; }
+  .course-heading .eyebrow { display: none; }
+  h2 { justify-content: flex-end; margin: 0; font-size: 18px; }
+  .course-heading p { font-size: 12px; }
+  .part-list { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0; }
+  .part-button { min-height: 64px; padding: 10px 14px; border-color: #e5ebe0; background: #f7f9f3; }
+  .part-button.active { background: #eaf3e7; }
+  .unit-summary { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; margin: 0; padding: 0; border: 0; background: transparent; }
+  .unit-summary .eyebrow, .small-note { display: none; }
+  .unit-summary p { margin: 0; white-space: nowrap; }
+  .unit-summary strong { font-size: 16px; }
+  .unit-summary progress { flex: 1; min-width: 0; }
+  .sidebar-bottom { display: none; margin: 0; padding: 0; grid-column: 1 / -1; }
+  body.storage-unavailable .sidebar-bottom { display: flex; }
+  .main { margin-left: 0; min-height: auto; padding-inline: 28px; }
+  .topbar { display: none; }
+  .study { padding-top: 27px; }
+  h1 { font-size: clamp(28px, 4.1vw, 36px); }
+}
+@media (max-width: 600px) {
+  .sidebar { padding: 15px 16px; gap: 12px; }
+  .brand { gap: 8px; font-size: 25px; }
+  .brand-mark { width: 37px; height: 39px; font-size: 26px; }
+  .brand-subtitle { font-size: 8px; margin-top: 3px; }
+  h2 { font-size: 16px; }
+  .course-heading p { font-size: 10px; }
+  .part-list { gap: 7px; }
+  .part-button { min-height: 59px; padding: 9px 8px; gap: 7px; border-radius: 10px; }
+  .part-number { width: 24px; height: 30px; border-radius: 7px; font-size: 11px; }
+  .part-title { font-size: 12px; }
+  .part-detail { font-size: 10px; margin-top: 1px; }
+  .part-indicator { display: none; }
+  .unit-summary { gap: 10px; }
+  .unit-summary p { font-size: 11px; }
+  .main { padding-inline: 14px; }
+  .study { padding-top: 22px; }
+  .study-heading { margin-bottom: 20px; padding: 0 5px; }
+  .study-heading > .eyebrow { font-size: 9px; letter-spacing: .3px; }
+  h1 { max-width: 23ch; margin: 12px auto 7px; font-size: clamp(25px, 6.2vw, 31px); line-height: 1.35; }
+  .study-heading p { font-size: 12px; }
+  .study-panel { padding: 15px 14px 13px; border-radius: 18px; }
+  .lesson-toolbar { margin-bottom: 14px; gap: 5px; }
+  .lesson-toolbar > div { gap: 6px; }
+  .part-tag { font-size: 10px; padding: 4px 7px; }
+  .range-label { font-size: 11px; }
+  .text-button { min-height: 42px; font-size: 11px; padding-inline: 8px; }
+  .progress-label { font-size: 11px; gap: 8px; }
+  .progress-label > span:first-child { gap: 2px 6px; }
+  .card-meta { margin-top: 16px; }
+  .flashcard { min-height: 320px; }
+  .card-face { padding: 22px 17px; border-radius: 15px; }
+  .kanji { font-size: clamp(70px, 20vw, 90px); }
+  .kanji.long-word { font-size: clamp(33px, 9vw, 54px); }
+  .han-viet-label { font-size: 9px; letter-spacing: .4px; }
+  .han-viet { font-size: 19px; }
+  .kanji-meaning { font-size: 12px; line-height: 1.8; margin-bottom: 14px; }
+  .hiragana { font-size: clamp(24px, 6.5vw, 30px); }
+  .meaning { font-size: 17px; }
+  .flip-hint { margin: 12px 0 15px; font-size: 11px; }
+  .rating-buttons { gap: 9px; }
+  .rating-button { min-height: 50px; font-size: 13px; }
+  .navigation { margin-top: 12px; gap: 6px; }
+  .nav-button { font-size: 12px; padding-inline: 5px; }
+  .nav-caption { font-size: 10px; }
+  .feedback { margin-top: 4px; font-size: 11px; }
+  .study-footer { justify-content: center; margin-top: 10px; }
+  .keyboard-hints { display: none; }
+  .reset-note { text-align: center; margin: 0; font-size: 10px; }
+  .page-footer { font-size: 10px; padding-top: 5px; }
+}
+@media (max-width: 360px) {
+  .sidebar { padding-inline: 12px; }
+  .brand { font-size: 22px; }
+  .brand-subtitle { font-size: 7px; }
+  .course-heading p { max-width: 94px; }
+  .part-number { display: none; }
+  .part-button { justify-content: center; text-align: center; }
+  .main { padding-inline: 10px; }
+  .study-panel { padding-inline: 12px; }
+  .nav-caption { display: none; }
+}
+/* Màn hình ngang thấp: thanh bên có thể cuộn và trang vẫn cuộn bình thường. */
+@media (min-width: 981px) and (max-height: 760px) {
+  .course-heading { margin-top: 28px; }
+  .unit-summary { margin-top: 20px; }
+  .study { padding-top: 25px; }
+  .study-heading { margin-bottom: 20px; }
+}
+@media (hover: hover) { .rating-button:hover { transform: translateY(-1px); } .flashcard:hover .card-face { border-color: #b9ceb2; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; } }

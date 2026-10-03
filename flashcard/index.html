@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Học 120 từ vựng tiếng Nhật Unit 01 bằng flashcard. Lật thẻ, ôn từ chưa nhớ và lưu tiến trình ngay trên trình duyệt.">
+  <title>Kotoba — Flashcard tiếng Nhật · Unit 01</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%233a5848'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='40' fill='%23fff'%3Eあ%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <!-- defer chờ HTML được đọc xong mới chạy JavaScript. -->
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar" aria-label="Danh sách phần học">
+    <a class="brand" href="index.html" aria-label="Kotoba — Trang học từ vựng">
+      <span class="brand-mark" lang="ja">あ</span>
+      <span>kotoba<span class="brand-subtitle">MỖI NGÀY MỘT TỪ MỚI</span></span>
+    </a>
+    <div class="course-heading"><span class="eyebrow">BỘ TỪ VỰNG CỦA BẠN</span><h2>Unit 01 <span class="unit-dot"></span></h2><p id="course-description">120 từ · 3 phần học</p></div>
+    <!-- Các nút chọn phần được tạo từ vocabulary trong script.js. -->
+    <nav id="part-list" class="part-list" aria-label="Chọn phần học"></nav>
+    <div class="unit-summary">
+      <span class="eyebrow">TIẾN TRÌNH UNIT 01</span>
+      <p><strong id="unit-known">0</strong><span id="unit-total"> / 120 từ đã nhớ</span></p>
+      <progress id="unit-progress" max="120" value="0" aria-label="Tiến trình toàn Unit 01"></progress>
+      <span class="small-note">Từng chút một, bạn sẽ tiến xa.</span>
+    </div>
+    <div class="sidebar-bottom"><span class="save-dot" aria-hidden="true"></span><span id="storage-status">Tiến trình lưu trên trình duyệt này</span></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar"><span class="breadcrumb">Từ vựng tiếng Nhật <span>/</span> <strong>Unit 01</strong></span><span class="local-badge"><span aria-hidden="true">●</span> Học theo nhịp của bạn</span></header>
+    <section class="study" aria-labelledby="study-title">
+      <div class="study-heading"><span class="eyebrow">NHỚ TỪ MỚI, MỞ THÊM THẾ GIỚI</span><h1 id="study-title">Mỗi ngày, một chút <span>tiếng Nhật.</span></h1><p>Lật một tấm thẻ. Ghi nhớ một điều mới.</p></div>
+      <div class="study-panel">
+        <div class="lesson-toolbar"><div><span id="part-label" class="part-tag">PHẦN 01</span><span id="part-range" class="range-label">Từ 01–40</span></div><button id="shuffle" class="text-button" type="button"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h3c5 0 7 12 12 12h3M17 14l4 4-4 4M3 18h3c2 0 3.5-2 5-5M13 9c1.5-2 3-3 5-3h3M17 2l4 4-4 4"/></svg> Xáo trộn</button></div>
+        <div class="progress-label"><span>Tiến trình phần học <strong id="known-count">0 / 40 từ đã nhớ</strong></span><span id="progress-percent">0%</span></div>
+        <progress id="part-progress" max="40" value="0" aria-label="Tiến trình phần đang học"></progress>
+
+        <div class="card-meta"><span id="word-status">Từ mới</span><span id="counter">1 / 40</span></div>
+        <!-- Hai mặt nằm chồng lên nhau. CSS xoay phần bên trong để lật thẻ. -->
+        <button id="flashcard" class="flashcard" type="button" aria-label="Lật thẻ để xem Hán-Việt, nghĩa từng chữ Kanji, Hiragana và nghĩa của từ" aria-pressed="false" aria-describedby="flip-hint">
+          <span class="card-inner">
+            <span id="card-front" class="card-face card-front"><span id="kanji" class="kanji" lang="ja">性別</span></span>
+            <span id="card-back" class="card-face card-back" aria-hidden="true"><span class="han-viet-label">HÁN-VIỆT · NGHĨA TỪNG CHỮ</span><span id="han-viet" class="han-viet">TÍNH BIỆT</span><span id="kanji-meaning" class="kanji-meaning">性 (tính): tính chất, bản tính · 別 (biệt): phân biệt, khác nhau</span><span id="hiragana" class="hiragana" lang="ja">せいべつ</span><span class="answer-divider"></span><span id="meaning" class="meaning">Giới tính</span></span>
+          </span>
+        </button>
+        <p id="flip-hint" class="flip-hint"><span aria-hidden="true">↻</span> Chạm vào thẻ hoặc nhấn Space để xem đáp án</p>
+
+        <div class="rating-buttons"><button id="not-known" class="rating-button not-known" type="button"><span aria-hidden="true">↺</span> Chưa nhớ</button><button id="known" class="rating-button known" type="button"><span aria-hidden="true">✓</span> Đã nhớ</button></div>
+        <div class="navigation"><button id="previous" class="nav-button" type="button">← Từ trước</button><span class="nav-caption">Một từ, một bước tiến.</span><button id="next" class="nav-button" type="button">Từ tiếp →</button></div>
+        <p id="feedback" class="feedback" role="status" aria-live="polite">Từ chưa nhớ sẽ được ưu tiên ôn lại sau hai lượt chuyển từ.</p>
+      </div>
+      <div class="study-footer"><span class="keyboard-hints"><kbd>Space</kbd> lật thẻ <span>·</span> <kbd>←</kbd> <kbd>→</kbd> chuyển từ</span><button id="reset" class="text-button reset-button" type="button">↺ Học lại từ đầu</button></div>
+      <p class="reset-note">“Học lại từ đầu” chỉ đặt lại phần đang chọn.</p>
+    </section>
+    <footer class="page-footer"><span lang="ja">継続は力なり</span><span>Kiên trì tạo nên sức mạnh.</span></footer>
+  </main>
+</body>
+</html>
