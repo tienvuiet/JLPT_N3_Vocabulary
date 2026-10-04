@@ -282,7 +282,8 @@ function render() {
   $("part-range").textContent = `Từ ${String(start).padStart(2, "0")}–${start + part.length - 1}`;
   const status = state.statuses[session.currentKey];
   $("word-status").dataset.status = status || "new";
-  $("word-status").textContent = status === "known" ? "✓ Đã nhớ" : status === "missed" ? "↺ Cần ôn lại" : "Từ mới";
+  const reviewing = session.currentKey !== session.order[session.cursor];
+  $("word-status").textContent = reviewing ? "↺ Đang ôn lại" : status === "known" ? "✓ Đã nhớ" : status === "missed" ? "↺ Cần ôn lại" : "Từ mới";
   $("known").setAttribute("aria-pressed", String(status === "known"));
   $("not-known").setAttribute("aria-pressed", String(status === "missed"));
   $("previous").disabled = session.history.length === 0 && session.order.length <= 1;
@@ -307,16 +308,16 @@ function snapshot(session) {
   return { cursor: session.cursor, currentKey: session.currentKey, normalSinceReview: session.normalSinceReview, lastReviewKey: session.lastReviewKey };
 }
 
-// Sau hai lượt chuyển bình thường, ôn một từ chưa nhớ rồi tiếp tục từ vị trí cũ.
+// Chỉ tự ôn khi đánh giá từ. Nút/phím chuyển từ luôn đi theo thứ tự đang hiển thị.
 // Không nhân đôi từ trong bộ thẻ; số từ đã nhớ luôn được tính theo từ duy nhất.
-function nextWord() {
+function nextWord(allowReview = false) {
   const session = currentSession();
   if (session.order.length <= 1) return;
   session.history.push(snapshot(session));
   if (session.history.length > 100) session.history.shift();
   const missed = session.order.filter(key => state.statuses[key] === "missed");
   let reviewKey;
-  if (session.normalSinceReview >= 2 && missed.length) {
+  if (allowReview && session.normalSinceReview >= 2 && missed.length) {
     const after = (missed.indexOf(session.lastReviewKey) + 1) % missed.length;
     for (let offset = 0; offset < missed.length; offset++) {
       const candidate = missed[(after + offset) % missed.length];
@@ -328,6 +329,8 @@ function nextWord() {
     session.lastReviewKey = reviewKey;
     session.normalSinceReview = 0;
   } else {
+    // Nếu đang xem thẻ ôn (kể cả phiên cũ được khôi phục), chuyển từ vị trí thẻ đó.
+    if (!allowReview) session.cursor = session.order.indexOf(session.currentKey);
     session.cursor = (session.cursor + 1) % session.order.length;
     session.currentKey = session.order[session.cursor];
     session.normalSinceReview = Math.min(2, session.normalSinceReview + 1);
@@ -336,7 +339,7 @@ function nextWord() {
   saveState();
   $("feedback").textContent = reviewKey
     ? "Ôn lại một chút: đây là từ bạn đã đánh dấu Chưa nhớ."
-    : "Từ chưa nhớ sẽ được ưu tiên ôn lại sau hai lượt chuyển từ.";
+    : "Đã chuyển sang từ tiếp theo trong thứ tự hiện tại.";
 }
 
 function previousWord() {
@@ -356,13 +359,17 @@ function previousWord() {
 function rateWord(status) {
   const word = wordsByKey.get(currentSession().currentKey);
   state.statuses[currentSession().currentKey] = status;
-  nextWord(); // Đánh dấu xong chuyển sang thẻ tiếp theo, luôn ở mặt Kanji.
+  nextWord(true); // Đánh giá xong mới cho phép tự ôn, luôn ở mặt Kanji.
   // Phần chỉ còn một từ vẫn cần cập nhật và lưu kết quả.
   if (currentSession().order.length === 1) { render(); saveState(); }
   const complete = countKnown(parts[state.activePart]) === parts[state.activePart].length;
   $("feedback").textContent = complete
     ? "Tuyệt vời! Bạn đã nhớ tất cả từ trong phần này. Có thể chọn phần tiếp hoặc tiếp tục ôn."
     : status === "known" ? `Đã nhớ “${word.kanji}”. Tiếp tục nhé!` : `“${word.kanji}” được đánh dấu Chưa nhớ và sẽ sớm xuất hiện lại.`;
+  const session = currentSession();
+  if (session.currentKey !== session.order[session.cursor]) {
+    $("feedback").textContent += ` Đang ôn lại “${wordsByKey.get(session.currentKey).kanji}” vì bạn đã đánh dấu Chưa nhớ.`;
+  }
 }
 
 // Fisher–Yates: mỗi từ vẫn xuất hiện đúng một lần trong thứ tự thẻ.
@@ -394,7 +401,7 @@ function resetPart() {
 
 $("flashcard").addEventListener("click", () => setFlipped(!isFlipped));
 $("previous").addEventListener("click", previousWord);
-$("next").addEventListener("click", nextWord);
+$("next").addEventListener("click", () => nextWord());
 $("shuffle").addEventListener("click", shuffleWords);
 $("known").addEventListener("click", () => rateWord("known"));
 $("not-known").addEventListener("click", () => rateWord("missed"));

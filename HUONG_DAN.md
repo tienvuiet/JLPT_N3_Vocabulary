@@ -19,9 +19,9 @@ Nhấp đúp `flashcard/index.html` để mở bằng Chrome, Edge hoặc Firefo
 
 - Chọn **Phần 1**, **Phần 2** hoặc **Phần 3**. Mỗi phần gồm 40 từ theo đúng thứ tự dữ liệu bạn gửi.
 - Mặt trước chỉ có từ tiếng Nhật trong trường `kanji`. Bấm vào thẻ hoặc nhấn **Space** để xem âm Hán-Việt, nghĩa cơ bản theo từng chữ Kanji, cách đọc Hiragana và nghĩa tiếng Việt của cả từ. Ví dụ: `製品` → `CHẾ PHẨM` → `製 (chế): chế tạo, làm ra · 品 (phẩm): vật phẩm, sản phẩm` → `せいひん` → Sản phẩm, chế phẩm.
-- Bấm **← Từ trước** / **Từ tiếp →** hoặc dùng hai phím mũi tên để chuyển từ. Thẻ mới luôn quay về mặt Kanji.
+- Bấm **← Từ trước** / **Từ tiếp →** hoặc dùng hai phím mũi tên để chuyển từ. **Từ tiếp →** luôn đi đến từ liền sau trong thứ tự hiện tại, không tự nhảy về từ chưa nhớ. Thẻ mới luôn quay về mặt Kanji.
 - Bấm **Đã nhớ** hoặc **Chưa nhớ** để đánh dấu từ đang hiển thị và chuyển sang thẻ tiếp theo.
-- Cứ sau hai lượt chuyển bình thường, website ưu tiên ôn một từ đã đánh dấu **Chưa nhớ**, nếu có. Nếu có nhiều từ chưa nhớ, chúng được ôn luân phiên. Sau thẻ ôn, việc học tiếp tục từ vị trí đang học. Nút **Từ trước** quay về thẻ vừa xem mà không xóa kết quả đánh dấu.
+- Khi bấm **Đã nhớ** hoặc **Chưa nhớ**, website có thể ưu tiên ôn một từ đã đánh dấu **Chưa nhớ** sau hai lượt chuyển bình thường. Thẻ ôn hiển thị **Đang ôn lại** kèm thông báo lý do. Nếu có nhiều từ chưa nhớ, chúng được ôn luân phiên. Đánh giá thẻ ôn xong, việc học tiếp tục từ vị trí đang học. Nếu dùng **Từ tiếp →** hoặc phím mũi tên phải trên thẻ ôn, website chuyển đến từ liền sau thẻ đang hiển thị. Nút **Từ trước** quay về thẻ vừa xem mà không xóa kết quả đánh dấu.
 - **Xáo trộn** thay đổi thứ tự trong phần đang chọn và giữ kết quả đã nhớ. Số thứ tự là vị trí của từ trong bộ thẻ hiện tại; khi ôn ưu tiên, số này có thể quay lại vị trí của từ cũ.
 - Thanh tiến trình tính theo số từ đã đánh dấu **Đã nhớ**, không tính số lần lật hoặc xem thẻ. Cột bên trái hiển thị tổng tiến trình của Unit 01.
 - **Học lại từ đầu** đặt lại phần đang chọn sau khi bạn xác nhận. Các phần khác được giữ nguyên.
