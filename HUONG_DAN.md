@@ -18,15 +18,16 @@ Ba file đã có đầy đủ code. Bạn có thể mở chúng bằng VS Code h
 Nhấp đúp `flashcard/index.html` để mở bằng Chrome, Edge hoặc Firefox. Không cần cài đặt hay chạy lệnh. Website dùng được khi không có mạng.
 
 - Chọn **Phần 1**, **Phần 2** hoặc **Phần 3**. Mỗi phần gồm 40 từ theo đúng thứ tự dữ liệu bạn gửi.
+- Bấm tên phần trên thanh bên để mở hai mục **Chưa thuộc** và **Đã thuộc**, kèm số lượng từ, ngay bên dưới. Chọn phần khác sẽ thu gọn phần trước; bấm lại phần đang mở để thu gọn. Bấm mục con hoặc dùng hai nút phía trên thẻ để chọn nhóm muốn ôn. Từ mới và từ từng đánh dấu **Chưa nhớ** đều nằm trong **Chưa thuộc**; kết quả **Đã nhớ** đã lưu trước đây được chuyển vào **Đã thuộc**.
 - Mặt trước chỉ có từ tiếng Nhật trong trường `kanji`. Bấm vào thẻ hoặc nhấn **Space** để xem âm Hán-Việt, nghĩa cơ bản theo từng chữ Kanji, cách đọc Hiragana và nghĩa tiếng Việt của cả từ. Ví dụ: `製品` → `CHẾ PHẨM` → `製 (chế): chế tạo, làm ra · 品 (phẩm): vật phẩm, sản phẩm` → `せいひん` → Sản phẩm, chế phẩm.
-- Bấm **← Từ trước** / **Từ tiếp →** hoặc dùng hai phím mũi tên để chuyển từ. **Từ tiếp →** luôn đi đến từ liền sau trong thứ tự hiện tại, không tự nhảy về từ chưa nhớ. Thẻ mới luôn quay về mặt Kanji.
-- Bấm **Đã nhớ** hoặc **Chưa nhớ** để đánh dấu từ đang hiển thị và chuyển sang thẻ tiếp theo.
-- Khi bấm **Đã nhớ** hoặc **Chưa nhớ**, website có thể ưu tiên ôn một từ đã đánh dấu **Chưa nhớ** sau hai lượt chuyển bình thường. Thẻ ôn hiển thị **Đang ôn lại** kèm thông báo lý do. Nếu có nhiều từ chưa nhớ, chúng được ôn luân phiên. Đánh giá thẻ ôn xong, việc học tiếp tục từ vị trí đang học. Nếu dùng **Từ tiếp →** hoặc phím mũi tên phải trên thẻ ôn, website chuyển đến từ liền sau thẻ đang hiển thị. Nút **Từ trước** quay về thẻ vừa xem mà không xóa kết quả đánh dấu.
-- **Xáo trộn** thay đổi thứ tự trong phần đang chọn và giữ kết quả đã nhớ. Số thứ tự là vị trí của từ trong bộ thẻ hiện tại; khi ôn ưu tiên, số này có thể quay lại vị trí của từ cũ.
-- Thanh tiến trình tính theo số từ đã đánh dấu **Đã nhớ**, không tính số lần lật hoặc xem thẻ. Cột bên trái hiển thị tổng tiến trình của Unit 01.
+- Bấm **← Từ trước** / **Từ tiếp →** hoặc dùng hai phím mũi tên để chuyển giữa các từ trong nhóm đang chọn. Số thứ tự hiển thị vị trí và tổng số từ của nhóm đó. Thẻ mới luôn quay về mặt Kanji.
+- Bấm **Đã thuộc** hoặc **Chưa thuộc** để đánh dấu từ đang hiển thị. Từ chuyển sang nhóm tương ứng ngay, số lượng và tiến trình được cập nhật, rồi website mở thẻ tiếp theo trong nhóm đang ôn.
+- Khi nhóm trống, website hiện thông báo và nút chuyển sang nhóm còn lại. Bạn cũng có thể chọn phần khác để tiếp tục học.
+- **Xáo trộn** thay đổi thứ tự trong nhóm đang chọn, giữ kết quả ghi nhớ và thứ tự nhóm còn lại.
+- Thanh tiến trình tính theo số từ đã đánh dấu **Đã thuộc** trên toàn phần, không tính số lần lật hoặc xem thẻ. Cột bên trái hiển thị tổng tiến trình của Unit 01.
 - **Học lại từ đầu** đặt lại phần đang chọn sau khi bạn xác nhận. Các phần khác được giữ nguyên.
 
-Tiến trình, phần đang chọn, thẻ đang học và thứ tự xáo trộn được lưu bằng `localStorage`. F5 hoặc mở lại bằng cùng trình duyệt, cùng hồ sơ và cùng đường dẫn file sẽ khôi phục dữ liệu. Mặt thẻ khôi phục luôn là Kanji. Dữ liệu nằm trên thiết bị này, không đồng bộ qua điện thoại/máy tính. Chế độ ẩn danh, xóa dữ liệu trình duyệt hoặc di chuyển file có thể làm mất tiến trình. Nếu trình duyệt chặn lưu trữ, website vẫn học được và hiện thông báo không thể lưu.
+Tiến trình, phần và nhóm đang chọn, thẻ đang học và thứ tự xáo trộn được lưu bằng `localStorage`. F5 hoặc mở lại bằng cùng trình duyệt, cùng hồ sơ và cùng đường dẫn file sẽ khôi phục dữ liệu. Mặt thẻ khôi phục luôn là Kanji. Dữ liệu nằm trên thiết bị này, không đồng bộ qua điện thoại/máy tính. Chế độ ẩn danh, xóa dữ liệu trình duyệt hoặc di chuyển file có thể làm mất tiến trình. Nếu trình duyệt chặn lưu trữ, website vẫn học được và hiện thông báo không thể lưu.
 
 ## 3. Thêm từ vựng mới
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Học 120 từ vựng tiếng Nhật Unit 01 bằng flashcard. Lật thẻ, ôn từ chưa nhớ và lưu tiến trình ngay trên trình duyệt.">
+  <meta name="description" content="Học 120 từ vựng tiếng Nhật Unit 01 bằng flashcard. Ôn riêng từ đã thuộc, chưa thuộc và lưu tiến trình ngay trên trình duyệt.">
   <title>Kotoba — Flashcard tiếng Nhật · Unit 01</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%233a5848'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='40' fill='%23fff'%3Eあ%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
@@ -21,7 +21,7 @@
     <nav id="part-list" class="part-list" aria-label="Chọn phần học"></nav>
     <div class="unit-summary">
       <span class="eyebrow">TIẾN TRÌNH UNIT 01</span>
-      <p><strong id="unit-known">0</strong><span id="unit-total"> / 120 từ đã nhớ</span></p>
+      <p><strong id="unit-known">0</strong><span id="unit-total"> / 120 từ đã thuộc</span></p>
       <progress id="unit-progress" max="120" value="0" aria-label="Tiến trình toàn Unit 01"></progress>
       <span class="small-note">Từng chút một, bạn sẽ tiến xa.</span>
     </div>
@@ -34,9 +34,16 @@
       <div class="study-heading"><span class="eyebrow">NHỚ TỪ MỚI, MỞ THÊM THẾ GIỚI</span><h1 id="study-title">Mỗi ngày, một chút <span>tiếng Nhật.</span></h1><p>Lật một tấm thẻ. Ghi nhớ một điều mới.</p></div>
       <div class="study-panel">
         <div class="lesson-toolbar"><div><span id="part-label" class="part-tag">PHẦN 01</span><span id="part-range" class="range-label">Từ 01–40</span></div><button id="shuffle" class="text-button" type="button"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h3c5 0 7 12 12 12h3M17 14l4 4-4 4M3 18h3c2 0 3.5-2 5-5M13 9c1.5-2 3-3 5-3h3M17 2l4 4-4 4"/></svg> Xáo trộn</button></div>
-        <div class="progress-label"><span>Tiến trình phần học <strong id="known-count">0 / 40 từ đã nhớ</strong></span><span id="progress-percent">0%</span></div>
+        <div class="progress-label"><span>Tiến trình phần học <strong id="known-count">0 / 40 từ đã thuộc</strong></span><span id="progress-percent">0%</span></div>
         <progress id="part-progress" max="40" value="0" aria-label="Tiến trình phần đang học"></progress>
 
+        <div class="review-groups" role="group" aria-label="Chọn nhóm từ để ôn tập">
+          <button id="review-missed" class="review-group" type="button" aria-pressed="true" aria-controls="study-cards empty-group">Chưa thuộc <span id="missed-count">40</span></button>
+          <button id="review-known" class="review-group" type="button" aria-pressed="false" aria-controls="study-cards empty-group">Đã thuộc <span id="review-known-count">0</span></button>
+        </div>
+        <p class="group-note">Từ mới nằm trong “Chưa thuộc”. Đánh dấu để chuyển từ giữa hai nhóm.</p>
+        <div id="empty-group" class="empty-group" hidden><strong id="empty-title"></strong><p id="empty-description"></p><button id="switch-group" class="text-button" type="button"></button></div>
+        <div id="study-cards">
         <div class="card-meta"><span id="word-status">Từ mới</span><span id="counter">1 / 40</span></div>
         <!-- Hai mặt nằm chồng lên nhau. CSS xoay phần bên trong để lật thẻ. -->
         <button id="flashcard" class="flashcard" type="button" aria-label="Lật thẻ để xem Hán-Việt, nghĩa từng chữ Kanji, Hiragana và nghĩa của từ" aria-pressed="false" aria-describedby="flip-hint">
@@ -47,9 +54,10 @@
         </button>
         <p id="flip-hint" class="flip-hint"><span aria-hidden="true">↻</span> Chạm vào thẻ hoặc nhấn Space để xem đáp án</p>
 
-        <div class="rating-buttons"><button id="not-known" class="rating-button not-known" type="button"><span aria-hidden="true">↺</span> Chưa nhớ</button><button id="known" class="rating-button known" type="button"><span aria-hidden="true">✓</span> Đã nhớ</button></div>
+        <div class="rating-buttons"><button id="not-known" class="rating-button not-known" type="button"><span aria-hidden="true">↺</span> Chưa thuộc</button><button id="known" class="rating-button known" type="button"><span aria-hidden="true">✓</span> Đã thuộc</button></div>
         <div class="navigation"><button id="previous" class="nav-button" type="button">← Từ trước</button><span class="nav-caption">Một từ, một bước tiến.</span><button id="next" class="nav-button" type="button">Từ tiếp →</button></div>
-        <p id="feedback" class="feedback" role="status" aria-live="polite">Nút chuyển từ đi theo thứ tự. Khi đánh giá Đã nhớ / Chưa nhớ, từ chưa nhớ sẽ được ưu tiên ôn lại.</p>
+        </div>
+        <p id="feedback" class="feedback" role="status" aria-live="polite">Đang ôn nhóm Chưa thuộc. Chọn Đã thuộc để ôn lại những từ bạn đã nhớ.</p>
       </div>
       <div class="study-footer"><span class="keyboard-hints"><kbd>Space</kbd> lật thẻ <span>·</span> <kbd>←</kbd> <kbd>→</kbd> chuyển từ</span><button id="reset" class="text-button reset-button" type="button">↺ Học lại từ đầu</button></div>
       <p class="reset-note">“Học lại từ đầu” chỉ đặt lại phần đang chọn.</p>

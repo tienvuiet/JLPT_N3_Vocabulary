@@ -155,7 +155,7 @@ let isFlipped = false;
 
 function createSession(part) {
   const order = part.map(wordKey);
-  return { order, cursor: 0, currentKey: order[0], history: [], normalSinceReview: 0, lastReviewKey: null };
+  return { order, cursor: 0, currentKey: order[0], history: [], filter: "missed" };
 }
 
 // Chỉ chấp nhận dữ liệu hợp lệ; vẫn chạy được nếu localStorage bị hỏng hoặc bị chặn.
@@ -188,14 +188,11 @@ function loadState() {
     session.order = order.concat(session.order.filter(key => !order.includes(key)));
     session.cursor = Number.isInteger(old.cursor) && old.cursor >= 0 && old.cursor < session.order.length ? old.cursor : 0;
     session.currentKey = keys.has(old.currentKey) ? old.currentKey : session.order[session.cursor];
-    session.normalSinceReview = Number.isInteger(old.normalSinceReview) ? Math.max(0, Math.min(2, old.normalSinceReview)) : 0;
-    session.lastReviewKey = keys.has(old.lastReviewKey) ? old.lastReviewKey : null;
+    session.filter = old.filter === "known" ? "known" : "missed";
     if (Array.isArray(old.history)) {
       session.history = old.history.filter(item => item && keys.has(item.currentKey) && Number.isInteger(item.cursor) && item.cursor >= 0 && item.cursor < session.order.length).slice(-100).map(item => ({
         cursor: item.cursor,
-        currentKey: item.currentKey,
-        normalSinceReview: Number.isInteger(item.normalSinceReview) ? Math.max(0, Math.min(2, item.normalSinceReview)) : 0,
-        lastReviewKey: keys.has(item.lastReviewKey) ? item.lastReviewKey : null
+        currentKey: item.currentKey
       }));
     }
     return session;
@@ -204,8 +201,38 @@ function loadState() {
 }
 
 const state = loadState();
+let expandedPart = state.activePart;
 function currentSession() { return state.sessions[state.activePart]; }
 function countKnown(part) { return part.filter(word => state.statuses[wordKey(word)] === "known").length; }
+function groupLabel(filter) { return filter === "known" ? "Đã thuộc" : "Chưa thuộc"; }
+function filteredOrder(session = currentSession()) {
+  return session.order.filter(key => session.filter === "known"
+    ? state.statuses[key] === "known"
+    : state.statuses[key] !== "known");
+}
+
+// Giữ thẻ hiện tại nếu còn trong nhóm; nhóm trống không có thẻ để đánh giá.
+function normalizeSession(session) {
+  const order = filteredOrder(session);
+  if (!order.includes(session.currentKey)) session.currentKey = order[0] || null;
+  session.cursor = session.currentKey ? session.order.indexOf(session.currentKey) : 0;
+  session.history = session.history.filter(item => order.includes(item.currentKey));
+  return order;
+}
+state.sessions.forEach(normalizeSession);
+
+function selectGroup(partIndex, filter) {
+  state.activePart = partIndex;
+  expandedPart = partIndex;
+  const session = currentSession();
+  if (session.filter !== filter) {
+    session.filter = filter;
+    session.history = [];
+  }
+  render();
+  saveState();
+  $("feedback").textContent = `Phần ${partIndex + 1} · ${groupLabel(filter)}: ${filteredOrder().length} từ để ôn tập.`;
+}
 
 function saveState() {
   try {
@@ -226,26 +253,47 @@ function updateStorageMessage() {
 
 // Tạo nút chọn phần từ dữ liệu, không cần sửa HTML khi thêm từ.
 parts.forEach((part, index) => {
+  const section = document.createElement("div");
+  section.className = "part-section";
   const button = document.createElement("button");
   button.type = "button";
   button.className = "part-button";
-  button.innerHTML = `<span class="part-number">${String(index + 1).padStart(2, "0")}</span><span class="part-copy"><span class="part-title">Phần ${index + 1}</span><span class="part-detail"></span></span><span class="part-indicator" aria-hidden="true">↗</span>`;
+  button.setAttribute("aria-controls", `part-groups-${index}`);
+  button.innerHTML = `<span class="part-number">${String(index + 1).padStart(2, "0")}</span><span class="part-copy"><span class="part-title">Phần ${index + 1}</span><span class="part-detail"></span></span><span class="part-indicator" aria-hidden="true">›</span>`;
   button.addEventListener("click", () => {
-    state.activePart = index;
-    render();
-    saveState();
-    $("feedback").textContent = `Đang học phần ${index + 1}. Tiến trình các phần khác được giữ lại.`;
+    if (state.activePart !== index) {
+      selectGroup(index, state.sessions[index].filter);
+    } else {
+      expandedPart = expandedPart === index ? null : index;
+      renderSidebar();
+    }
   });
-  $("part-list").appendChild(button);
+  section.appendChild(button);
+  const groups = document.createElement("div");
+  groups.id = `part-groups-${index}`;
+  groups.className = "part-groups";
+  ["missed", "known"].forEach(filter => {
+    const group = document.createElement("button");
+    group.type = "button";
+    group.className = "part-group";
+    group.dataset.filter = filter;
+    group.innerHTML = `<span>${groupLabel(filter)}</span><span class="group-count"></span>`;
+    group.addEventListener("click", () => selectGroup(index, filter));
+    groups.appendChild(group);
+  });
+  section.appendChild(groups);
+  $("part-list").appendChild(section);
 });
 
 function setFlipped(value) {
+  const word = wordsByKey.get(currentSession().currentKey);
+  if (!word) value = false;
   isFlipped = value;
   $("flashcard").classList.toggle("is-flipped", value);
   $("flashcard").setAttribute("aria-pressed", String(value));
   $("card-front").setAttribute("aria-hidden", String(value));
   $("card-back").setAttribute("aria-hidden", String(!value));
-  const word = wordsByKey.get(currentSession().currentKey);
+  if (!word) return;
   $("flashcard").setAttribute("aria-label", value
     ? `Hán-Việt: ${word.hanViet || "Chưa bổ sung"}. ${word.kanjiMeaning || ""}. ${word.hiragana}. ${word.meaning}. Lật thẻ để xem lại Kanji.`
     : `${word.kanji}. Lật thẻ để xem Hán-Việt, nghĩa từng chữ Kanji, Hiragana và nghĩa của từ.`);
@@ -257,23 +305,45 @@ function setFlipped(value) {
 function render() {
   const session = currentSession();
   const part = parts[state.activePart];
+  const order = normalizeSession(session);
   const word = wordsByKey.get(session.currentKey);
+  const empty = order.length === 0;
+  $("study-cards").hidden = empty;
+  $("empty-group").hidden = !empty;
+  $("empty-title").textContent = session.filter === "known" ? "Chưa có từ đã thuộc" : "Bạn đã thuộc hết phần này!";
+  $("empty-description").textContent = session.filter === "known"
+    ? "Ôn nhóm Chưa thuộc và đánh dấu Đã thuộc để thêm từ vào đây."
+    : "Chuyển sang Đã thuộc để ôn lại, hoặc chọn phần tiếp theo để học thêm.";
+  $("switch-group").textContent = session.filter === "known" ? "Ôn từ chưa thuộc →" : "Ôn từ đã thuộc →";
+  $("shuffle").disabled = order.length <= 1;
+  $("flashcard").disabled = empty;
+  $("known").disabled = empty;
+  $("not-known").disabled = empty;
   // Tắt hiệu ứng khi đổi từ, tránh hiện đáp án trong lúc mặt sau đang xoay.
   $("flashcard").classList.add("no-animation");
   setFlipped(false);
-  $("kanji").textContent = word.kanji;
-  $("kanji").classList.toggle("long-word", [...word.kanji].length >= 4);
-  $("hiragana").textContent = word.hiragana;
-  $("han-viet").textContent = word.hanViet || "Chưa bổ sung Hán-Việt";
-  $("kanji-meaning").textContent = word.kanjiMeaning || "Chưa bổ sung nghĩa từng chữ Kanji.";
-  $("meaning").textContent = word.meaning;
+  if (word) {
+    $("kanji").textContent = word.kanji;
+    $("kanji").classList.toggle("long-word", [...word.kanji].length >= 4);
+    $("hiragana").textContent = word.hiragana;
+    $("han-viet").textContent = word.hanViet || "Chưa bổ sung Hán-Việt";
+    $("kanji-meaning").textContent = word.kanjiMeaning || "Chưa bổ sung nghĩa từng chữ Kanji.";
+    $("meaning").textContent = word.meaning;
+  }
   void $("flashcard").offsetWidth; // Yêu cầu trình duyệt áp dụng trạng thái mặt trước.
   $("flashcard").classList.remove("no-animation");
 
   const known = countKnown(part);
   const percent = Math.round(known / part.length * 100);
-  $("counter").textContent = `${session.order.indexOf(session.currentKey) + 1} / ${part.length}`;
-  $("known-count").textContent = `${known} / ${part.length} từ đã nhớ`;
+  $("counter").textContent = `${empty ? 0 : order.indexOf(session.currentKey) + 1} / ${order.length}`;
+  $("known-count").textContent = `${known} / ${part.length} từ đã thuộc`;
+  $("missed-count").textContent = part.length - known;
+  $("review-known-count").textContent = known;
+  ["missed", "known"].forEach(filter => {
+    const button = $("review-" + filter);
+    button.classList.toggle("active", session.filter === filter);
+    button.setAttribute("aria-pressed", String(session.filter === filter));
+  });
   $("progress-percent").textContent = `${percent}%`;
   $("part-progress").max = part.length;
   $("part-progress").value = known;
@@ -282,74 +352,71 @@ function render() {
   $("part-range").textContent = `Từ ${String(start).padStart(2, "0")}–${start + part.length - 1}`;
   const status = state.statuses[session.currentKey];
   $("word-status").dataset.status = status || "new";
-  const reviewing = session.currentKey !== session.order[session.cursor];
-  $("word-status").textContent = reviewing ? "↺ Đang ôn lại" : status === "known" ? "✓ Đã nhớ" : status === "missed" ? "↺ Cần ôn lại" : "Từ mới";
+  $("word-status").textContent = status === "known" ? "✓ Đã thuộc" : status === "missed" ? "↺ Chưa thuộc" : "Từ mới · Chưa thuộc";
   $("known").setAttribute("aria-pressed", String(status === "known"));
   $("not-known").setAttribute("aria-pressed", String(status === "missed"));
-  $("previous").disabled = session.history.length === 0 && session.order.length <= 1;
-  $("next").disabled = session.order.length <= 1;
+  $("previous").disabled = order.length <= 1;
+  $("next").disabled = order.length <= 1;
 
   const totalKnown = countKnown(vocabulary);
   $("unit-known").textContent = totalKnown;
-  $("unit-total").textContent = ` / ${vocabulary.length} từ đã nhớ`;
+  $("unit-total").textContent = ` / ${vocabulary.length} từ đã thuộc`;
   $("course-description").textContent = `${vocabulary.length} từ · ${parts.length} phần học`;
   $("unit-progress").max = vocabulary.length;
   $("unit-progress").value = totalKnown;
-  [...$("part-list").children].forEach((button, index) => {
-    const active = index === state.activePart;
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-current", active ? "true" : "false");
-    button.querySelector(".part-detail").textContent = `${countKnown(parts[index])} / ${parts[index].length} đã nhớ`;
-  });
+  renderSidebar();
   updateStorageMessage();
 }
 
-function snapshot(session) {
-  return { cursor: session.cursor, currentKey: session.currentKey, normalSinceReview: session.normalSinceReview, lastReviewKey: session.lastReviewKey };
+function renderSidebar() {
+  const session = currentSession();
+  [...$("part-list").children].forEach((section, index) => {
+    const active = index === state.activePart;
+    const button = section.querySelector(".part-button");
+    section.classList.toggle("active", active);
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-current", active ? "true" : "false");
+    const expanded = index === expandedPart;
+    button.setAttribute("aria-expanded", String(expanded));
+    section.querySelector(".part-groups").hidden = !expanded;
+    button.querySelector(".part-detail").textContent = `${parts[index].length} từ vựng`;
+    const partKnown = countKnown(parts[index]);
+    section.querySelectorAll(".part-group").forEach(group => {
+      const selected = active && group.dataset.filter === session.filter;
+      const count = group.dataset.filter === "known" ? partKnown : parts[index].length - partKnown;
+      group.classList.toggle("active", selected);
+      group.setAttribute("aria-pressed", String(selected));
+      group.setAttribute("aria-label", `Phần ${index + 1} · ${groupLabel(group.dataset.filter)}: ${count} từ`);
+      group.querySelector(".group-count").textContent = count;
+    });
+  });
 }
 
-// Chỉ tự ôn khi đánh giá từ. Nút/phím chuyển từ luôn đi theo thứ tự đang hiển thị.
-// Không nhân đôi từ trong bộ thẻ; số từ đã nhớ luôn được tính theo từ duy nhất.
-function nextWord(allowReview = false) {
+function snapshot(session) {
+  return { cursor: session.cursor, currentKey: session.currentKey };
+}
+
+// Chỉ chuyển giữa các từ thuộc nhóm đang chọn.
+function nextWord() {
   const session = currentSession();
-  if (session.order.length <= 1) return;
+  const order = filteredOrder(session);
+  if (order.length <= 1) return;
   session.history.push(snapshot(session));
   if (session.history.length > 100) session.history.shift();
-  const missed = session.order.filter(key => state.statuses[key] === "missed");
-  let reviewKey;
-  if (allowReview && session.normalSinceReview >= 2 && missed.length) {
-    const after = (missed.indexOf(session.lastReviewKey) + 1) % missed.length;
-    for (let offset = 0; offset < missed.length; offset++) {
-      const candidate = missed[(after + offset) % missed.length];
-      if (candidate !== session.currentKey) { reviewKey = candidate; break; }
-    }
-  }
-  if (reviewKey) {
-    session.currentKey = reviewKey;
-    session.lastReviewKey = reviewKey;
-    session.normalSinceReview = 0;
-  } else {
-    // Nếu đang xem thẻ ôn (kể cả phiên cũ được khôi phục), chuyển từ vị trí thẻ đó.
-    if (!allowReview) session.cursor = session.order.indexOf(session.currentKey);
-    session.cursor = (session.cursor + 1) % session.order.length;
-    session.currentKey = session.order[session.cursor];
-    session.normalSinceReview = Math.min(2, session.normalSinceReview + 1);
-  }
+  session.currentKey = order[(order.indexOf(session.currentKey) + 1) % order.length];
   render();
   saveState();
-  $("feedback").textContent = reviewKey
-    ? "Ôn lại một chút: đây là từ bạn đã đánh dấu Chưa nhớ."
-    : "Đã chuyển sang từ tiếp theo trong thứ tự hiện tại.";
+  $("feedback").textContent = `Đã chuyển sang từ tiếp theo trong nhóm ${groupLabel(session.filter)}.`;
 }
 
 function previousWord() {
   const session = currentSession();
+  const order = filteredOrder(session);
+  if (order.length <= 1) return;
   if (session.history.length) {
     Object.assign(session, session.history.pop());
   } else {
-    session.cursor = (session.order.indexOf(session.currentKey) - 1 + session.order.length) % session.order.length;
-    session.currentKey = session.order[session.cursor];
-    session.normalSinceReview = 0;
+    session.currentKey = order[(order.indexOf(session.currentKey) - 1 + order.length) % order.length];
   }
   render();
   saveState();
@@ -357,36 +424,42 @@ function previousWord() {
 }
 
 function rateWord(status) {
-  const word = wordsByKey.get(currentSession().currentKey);
-  state.statuses[currentSession().currentKey] = status;
-  nextWord(true); // Đánh giá xong mới cho phép tự ôn, luôn ở mặt Kanji.
-  // Phần chỉ còn một từ vẫn cần cập nhật và lưu kết quả.
-  if (currentSession().order.length === 1) { render(); saveState(); }
-  const complete = countKnown(parts[state.activePart]) === parts[state.activePart].length;
-  $("feedback").textContent = complete
-    ? "Tuyệt vời! Bạn đã nhớ tất cả từ trong phần này. Có thể chọn phần tiếp hoặc tiếp tục ôn."
-    : status === "known" ? `Đã nhớ “${word.kanji}”. Tiếp tục nhé!` : `“${word.kanji}” được đánh dấu Chưa nhớ và sẽ sớm xuất hiện lại.`;
   const session = currentSession();
-  if (session.currentKey !== session.order[session.cursor]) {
-    $("feedback").textContent += ` Đang ôn lại “${wordsByKey.get(session.currentKey).kanji}” vì bạn đã đánh dấu Chưa nhớ.`;
-  }
-}
-
-// Fisher–Yates: mỗi từ vẫn xuất hiện đúng một lần trong thứ tự thẻ.
-function shuffleWords() {
-  const session = currentSession();
-  for (let index = session.order.length - 1; index > 0; index--) {
-    const random = Math.floor(Math.random() * (index + 1));
-    [session.order[index], session.order[random]] = [session.order[random], session.order[index]];
-  }
-  session.cursor = 0;
-  session.currentKey = session.order[0];
-  session.history = [];
-  session.normalSinceReview = 0;
-  session.lastReviewKey = null;
+  const word = wordsByKey.get(session.currentKey);
+  if (!word) return;
+  const order = filteredOrder(session);
+  const currentIndex = order.indexOf(session.currentKey);
+  const oldKey = session.currentKey;
+  state.statuses[oldKey] = status;
+  const remaining = filteredOrder(session);
+  // Tìm thẻ liền sau trong nhóm cũ, kể cả khi thẻ vừa đánh giá đã chuyển nhóm.
+  session.currentKey = order.slice(currentIndex + 1).concat(order.slice(0, currentIndex + 1))
+    .find(key => remaining.includes(key)) || null;
+  if (remaining.includes(oldKey)) session.history.push({ cursor: session.order.indexOf(oldKey), currentKey: oldKey });
+  session.history = session.history.slice(-100);
   render();
   saveState();
-  $("feedback").textContent = "Đã xáo trộn phần đang học. Kết quả đã nhớ vẫn được giữ lại.";
+  $("feedback").textContent = `“${word.kanji}” ${status === "known" ? "đã thuộc" : "chưa thuộc"}. `
+    + (remaining.length ? `Tiếp tục ôn nhóm ${groupLabel(session.filter)}.` : `Nhóm ${groupLabel(session.filter)} hiện không còn từ nào.`);
+}
+
+// Fisher–Yates chỉ xáo trộn nhóm đang ôn, giữ nguyên thứ tự nhóm còn lại.
+function shuffleWords() {
+  const session = currentSession();
+  const order = filteredOrder(session);
+  if (order.length <= 1) return;
+  const keys = new Set(order);
+  for (let index = order.length - 1; index > 0; index--) {
+    const random = Math.floor(Math.random() * (index + 1));
+    [order[index], order[random]] = [order[random], order[index]];
+  }
+  let cursor = 0;
+  session.order = session.order.map(key => keys.has(key) ? order[cursor++] : key);
+  session.currentKey = order[0];
+  session.history = [];
+  render();
+  saveState();
+  $("feedback").textContent = `Đã xáo trộn nhóm ${groupLabel(session.filter)} của phần đang học.`;
 }
 
 function resetPart() {
@@ -406,12 +479,17 @@ $("shuffle").addEventListener("click", shuffleWords);
 $("known").addEventListener("click", () => rateWord("known"));
 $("not-known").addEventListener("click", () => rateWord("missed"));
 $("reset").addEventListener("click", resetPart);
+$("review-missed").addEventListener("click", () => selectGroup(state.activePart, "missed"));
+$("review-known").addEventListener("click", () => selectGroup(state.activePart, "known"));
+$("switch-group").addEventListener("click", () => selectGroup(state.activePart, currentSession().filter === "known" ? "missed" : "known"));
 
 document.addEventListener("keydown", event => {
   if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
   // Không cản nhập liệu nếu sau này bổ sung ô tìm kiếm hay form.
   if (event.target instanceof Element && event.target.closest("input, textarea, select, [contenteditable='true']")) return;
   if (event.code === "Space" || event.key === " ") {
+    // Để Space kích hoạt nút chọn nhóm khi nút đó đang được focus.
+    if (event.target instanceof Element && event.target.closest("button:not(#flashcard)")) return;
     event.preventDefault(); // Không cuộn trang hoặc kích hoạt lại nút đang focus.
     setFlipped(!isFlipped);
   } else if (event.key === "ArrowLeft") {
@@ -422,4 +500,5 @@ document.addEventListener("keydown", event => {
 });
 
 render();
+$("feedback").textContent = `Phần ${state.activePart + 1} · ${groupLabel(currentSession().filter)}: ${filteredOrder().length} từ để ôn tập.`;
 if (recoveredStorage) $("feedback").textContent = "Dữ liệu lưu trước đó bị hỏng. Website đã khởi tạo lại tiến trình để bạn tiếp tục học.";
